@@ -1,5 +1,16 @@
 <?php
 
+// Parse the Postgresql config from heroku
+
+$url = parse_url(getenv("DATABASE_URL"));
+
+$pgconfig = [
+	'host' => $url["host"],
+	'username' => $url["user"],
+	'password' => $url["pass"],
+	'database' => substr($url["path"], 1)
+];
+
 return [
 
 	/*
@@ -26,7 +37,7 @@ return [
 	|
 	*/
 
-	'default' => 'mysql',
+	'default' => env('DB_DRIVER', 'pgsql'),
 
 	/*
 	|--------------------------------------------------------------------------
@@ -66,10 +77,10 @@ return [
 
 		'pgsql' => [
 			'driver'   => 'pgsql',
-			'host'     => env('DB_HOST', 'localhost'),
-			'database' => env('DB_DATABASE', 'forge'),
-			'username' => env('DB_USERNAME', 'forge'),
-			'password' => env('DB_PASSWORD', ''),
+			'host'     => $pgconfig['host'],
+			'database' => $pgconfig['database'],
+			'username' => $pgconfig['username'],
+			'password' => $pgconfig['password'],
 			'charset'  => 'utf8',
 			'prefix'   => '',
 			'schema'   => 'public',

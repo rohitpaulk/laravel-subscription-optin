@@ -1,15 +1,13 @@
 <?php namespace App\Http\Controllers;
 
-class WelcomeController extends Controller {
+class SubscriptionsController extends Controller {
 
 	/*
 	|--------------------------------------------------------------------------
-	| Welcome Controller
+	| Subscriptions Controller
 	|--------------------------------------------------------------------------
 	|
-	| This controller renders the "marketing page" for the application and
-	| is configured to only allow guests. Like most of the other sample
-	| controllers, you are free to modify or remove it as you desire.
+	| This controller handles creating new subsciptions.
 	|
 	*/
 
@@ -20,7 +18,7 @@ class WelcomeController extends Controller {
 	 */
 	public function __construct()
 	{
-		$this->middleware('guest');
+
 	}
 
 	/**
@@ -28,9 +26,12 @@ class WelcomeController extends Controller {
 	 *
 	 * @return Response
 	 */
-	public function index()
+	public function create()
 	{
-		return view('welcome');
+		// Test DB connection
+		$database = \DB::connection()->getDatabaseName();
+
+		return view('subscriptions/create', compact(['database']));
 	}
 
 }
