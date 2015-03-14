@@ -1,15 +1,17 @@
 <?php
 
 // Parse the Postgresql config from heroku
+$pgconfig = [];
 
-$url = parse_url(getenv("DATABASE_URL"));
-
-$pgconfig = [
-	'host' => $url["host"],
-	'username' => $url["user"],
-	'password' => $url["pass"],
-	'database' => substr($url["path"], 1)
-];
+if (getenv("DATABASE_URL")) {
+	$url = parse_url(getenv("DATABASE_URL"));
+	$pgconfig = [
+		'host' => $url["host"],
+		'username' => $url["user"],
+		'password' => $url["pass"],
+		'database' => substr($url["path"], 1)
+	];
+}
 
 return [
 
@@ -59,7 +61,7 @@ return [
 
 		'sqlite' => [
 			'driver'   => 'sqlite',
-			'database' => storage_path().'/database.sqlite',
+			'database' => storage_path().'/'.env('SQLITE_DATABASE_NAME', 'database').'.sqlite',
 			'prefix'   => '',
 		],
 
@@ -77,10 +79,10 @@ return [
 
 		'pgsql' => [
 			'driver'   => 'pgsql',
-			'host'     => $pgconfig['host'],
-			'database' => $pgconfig['database'],
-			'username' => $pgconfig['username'],
-			'password' => $pgconfig['password'],
+			'host'     => array_fetch($pgconfig, 'host'),
+			'database' => array_fetch($pgconfig, 'username'),
+			'username' => array_fetch($pgconfig, 'password'),
+			'password' => array_fetch($pgconfig, 'database'),
 			'charset'  => 'utf8',
 			'prefix'   => '',
 			'schema'   => 'public',

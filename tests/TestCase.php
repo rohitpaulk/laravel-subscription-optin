@@ -16,4 +16,22 @@ class TestCase extends Illuminate\Foundation\Testing\TestCase {
 		return $app;
 	}
 
+	public function setUp()
+	{
+		parent::setUp();
+
+		// Don't send mail in Testing
+		Mail::pretend(true);
+		// Migrate Database
+		Artisan::call('migrate:refresh');
+	}
+
+	public function tearDown()
+	{
+		parent::tearDown();
+
+		// Assert all mocks were true
+		Mockery::Close();
+	}
+
 }
