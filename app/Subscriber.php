@@ -19,4 +19,8 @@ class Subscriber extends Model {
 		return $this->first_name . " " . $this->last_name;
 	}
 
+	public function verification_link($root_url) {
+		return $root_url . "/verify?email=" . $this->email . "&nonce=" . $this->nonce;
+	}
+
 }

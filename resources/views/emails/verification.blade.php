@@ -1,1 +1,1 @@
-Test email.
+{{ $subscriber->verification_link(Request::root()) }}
