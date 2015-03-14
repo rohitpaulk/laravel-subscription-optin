@@ -79,10 +79,10 @@ return [
 
 		'pgsql' => [
 			'driver'   => 'pgsql',
-			'host'     => array_fetch($pgconfig, 'host'),
-			'database' => array_fetch($pgconfig, 'username'),
-			'username' => array_fetch($pgconfig, 'password'),
-			'password' => array_fetch($pgconfig, 'database'),
+			'host'     => array_get($pgconfig, 'host'),
+			'database' => array_get($pgconfig, 'database'),
+			'username' => array_get($pgconfig, 'username'),
+			'password' => array_get($pgconfig, 'password'),
 			'charset'  => 'utf8',
 			'prefix'   => '',
 			'schema'   => 'public',
