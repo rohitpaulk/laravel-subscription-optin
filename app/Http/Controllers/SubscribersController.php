@@ -1,13 +1,13 @@
 <?php namespace App\Http\Controllers;
 
-class SubscriptionsController extends Controller {
+class SubscribersController extends Controller {
 
 	/*
 	|--------------------------------------------------------------------------
-	| Subscriptions Controller
+	| Subscribers Controller
 	|--------------------------------------------------------------------------
 	|
-	| This controller handles creating new subsciptions.
+	| This controller handles creating new subscibers.
 	|
 	*/
 
@@ -22,7 +22,7 @@ class SubscriptionsController extends Controller {
 	}
 
 	/**
-	 * Show the application welcome screen to the user.
+	 * Show the subscriber form to the user.
 	 *
 	 * @return Response
 	 */
@@ -31,7 +31,7 @@ class SubscriptionsController extends Controller {
 		// Test DB connection
 		$database = \DB::connection()->getDatabaseName();
 
-		return view('subscriptions/create', compact(['database']));
+		return view('subscribers/create', compact(['database']));
 	}
 
 }

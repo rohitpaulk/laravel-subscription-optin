@@ -11,4 +11,4 @@
 |
 */
 
-Route::get('/', 'SubscriptionsController@create');
+Route::get('/', 'SubscribersController@create');
