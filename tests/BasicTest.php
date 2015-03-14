@@ -20,7 +20,7 @@ class BasicTest extends TestCase {
 	public function testSubscribersStoreWithValidParameters()
 	{
 		// Should send an email
-		Mail::shouldReceive('send')->once();
+		Mail::shouldReceive('queue')->once();
 
 		$data = [
 			'first_name' => "Abcd",
@@ -43,7 +43,7 @@ class BasicTest extends TestCase {
 	public function testSubscribersStoreWithInvalidParameters()
 	{
 		// Should not send an email
-		Mail::shouldReceive('send')->never();
+		Mail::shouldReceive('queue')->never();
 
 		$data = [
 			'first_name' => "Abcd",
@@ -60,7 +60,7 @@ class BasicTest extends TestCase {
 	{
 		$subscriber = $this->createSubscriber(['verified' => True]);
 		// Should not send an email
-		Mail::shouldReceive('send')->never();
+		Mail::shouldReceive('queue')->never();
 
 		$data = [
 			'first_name' => "Abcd",
@@ -88,7 +88,7 @@ class BasicTest extends TestCase {
 		$oldnonce = $subscriber->nonce;
 
 		// Should resend the email
-		Mail::shouldReceive('send')->once();
+		Mail::shouldReceive('queue')->once();
 
 		$data = [
 			'first_name' => "Abcd",

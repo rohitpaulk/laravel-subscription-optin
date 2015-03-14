@@ -99,7 +99,11 @@ class SubscribersController extends Controller {
 	 */
 	protected function sendVerificationEmail($subscriber)
 	{
-		Mail::send('emails.verification', ['subscriber' => $subscriber], function($message) use ($subscriber)
+		$data = [
+			'full_name' => $subscriber->full_name(),
+			'verification_link' => $subscriber->verification_link(Request::root())
+		];
+		Mail::queue('emails.verification', $data, function($message) use ($subscriber)
 		{
 			$message->to($subscriber->email, $subscriber->full_name())->subject('Verify your subscription');
 		});
