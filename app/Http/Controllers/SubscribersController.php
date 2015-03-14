@@ -11,7 +11,7 @@ class SubscribersController extends Controller {
 	| Subscribers Controller
 	|--------------------------------------------------------------------------
 	|
-	| This controller handles creating new subscibers.
+	| This controller handles actions related to subscibers.
 	|
 	*/
 
@@ -37,18 +37,54 @@ class SubscribersController extends Controller {
 	{
 		$input = $request->all();
 		$email = $input['email'];
-		$subscriber = new Subscriber;
-		$subscriber->first_name = $input['first_name'];
-		$subscriber->last_name = $input['last_name'];
-		$subscriber->email = $input['email'];
-		$subscriber->nonce = str_random(32);
-		$subscriber->verified = False;
-		$subscriber->save();
-		Mail::send('emails.verification', ['email' => $email], function($message) use ($subscriber)
+
+		// Check whether subscriber exists
+		if (Subscriber::where('email', $input['email'])->count() > 0) {
+			// Fetch the subscriber from the database
+			$subscriber = Subscriber::where('email', $input['email'])->firstOrFail();
+
+			// If the subscriber isn't verified, resend verification email
+			if (!$subscriber->verified)  {
+				$subscriber->nonce = str_random(32);
+				$subscriber->save();
+
+				$success_message = $this->sendVerificationEmail($subscriber);
+			}
+			else {
+				$success_message = "This email is already verified!";
+			}
+		} else {
+			// Create a Subscriber
+			$subscriber = new Subscriber($input);
+			$subscriber->nonce = str_random(32);
+			$subscriber->verified = False;
+			$subscriber->save();
+
+			$success_message = $this->sendVerificationEmail($subscriber);
+		}
+
+		return view('subscribers/sent', compact(['success_message']));
+	}
+
+	public function verify($email, $nonce)
+	{
+
+	}
+
+	/**
+	 * Send a verification email
+	 *
+	 * @param Subscriber
+	 * @return String
+	 */
+	protected function sendVerificationEmail($subscriber)
+	{
+		Mail::send('emails.verification', ['email' => $subscriber->email], function($message) use ($subscriber)
 		{
-		    $message->to($subscriber->email, $subscriber->first_name . " " . $subscriber->last_name)->subject('Verify your subscription');
+			$message->to($subscriber->email, $subscriber->full_name())->subject('Verify your subscription');
 		});
-		return view('subscribers/sent', compact(['email']));
+
+		return "We've sent an email to " . $subscriber->email;
 	}
 
 }

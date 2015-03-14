@@ -5,6 +5,6 @@
 	<body>
 		<h1>Subscription Created</h1>
 
-		<p>We've sent an email to {{ $email }}!</p>
+		<p>{{ $success_message }}</p>
 	</body>
 </html>
