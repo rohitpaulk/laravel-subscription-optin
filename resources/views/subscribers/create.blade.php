@@ -4,14 +4,22 @@
 	</head>
 	<body>
 		<h1>New Subscription</h1>
-		<form action="/">
-			<label>First Name</label>
-			<input type="text">
-			<label>Last Name</label>
-			<input type="text">
-			<label>Email</label>
-			<input type="email">
-		</form>
+
+		{!! Form::open() !!}
+
+			{!! Form::label('first_name', 'First Name:') !!}
+			{!! Form::text('first_name') !!}
+
+			{!! Form::label('last_name', 'Last Name:') !!}
+			{!! Form::text('last_name') !!}
+
+			{!! Form::label('email', 'Email:') !!}
+			{!! Form::text('email') !!}
+
+			{!! Form::submit('Submit') !!}
+
+		{!! Form::close() !!}
+
 		Connected to {{ $database }}
 	</body>
 </html>
