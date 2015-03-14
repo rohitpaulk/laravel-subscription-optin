@@ -1,7 +1,6 @@
 @extends('layouts.base')
 
 @section('content')
-	<h1>Subscription Created</h1>
-
+	<h1>Verify your email</h1>
 	<p>{{ $success_message }}</p>
 @stop

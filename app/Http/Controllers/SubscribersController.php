@@ -3,7 +3,7 @@
 use App\Subscriber;
 use App\Http\Requests\CreateSubscriberRequest;
 use Mail;
-
+use Request;
 class SubscribersController extends Controller {
 
 	/*
@@ -66,9 +66,29 @@ class SubscribersController extends Controller {
 		return view('subscribers/sent', compact(['success_message']));
 	}
 
-	public function verify($email, $nonce)
+	public function verify()
 	{
+		$input = Request::all();
 
+		if (!isset($input['email']) || !isset($input['nonce'])) {
+			abort(400);
+		}
+
+		if (Subscriber::where('email', $input['email'])->count() > 0) {
+			$subscriber = Subscriber::where('email', $input['email'])->firstOrFail();
+
+			if ($input['nonce'] == $subscriber->nonce) {
+				$subscriber->verified = true;
+				$subscriber->save();
+				$success_message ="Your email has been verified!";
+			} else {
+				$success_message ="We could not verify your email.";
+			}
+		} else {
+			abort(404);
+		}
+
+		return view('subscribers/verify', compact(['success_message']));
 	}
 
 	/**

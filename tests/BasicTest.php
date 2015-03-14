@@ -58,14 +58,7 @@ class BasicTest extends TestCase {
 
 	public function testSubscribersStoreWithAlreadyVerifiedEmail()
 	{
-		$subscriber = new App\Subscriber;
-		$subscriber->first_name = "abcd";
-		$subscriber->last_name = "abcd";
-		$subscriber->email = "abcd@gmail.com";
-		$subscriber->verified = True;
-		$subscriber->nonce = str_random(32);
-		$subscriber->save();
-
+		$subscriber = $this->createSubscriber(['verified' => True]);
 		// Should not send an email
 		Mail::shouldReceive('send')->never();
 
@@ -91,14 +84,7 @@ class BasicTest extends TestCase {
 
 	public function testSubscribersStoreWithExistingButUnverifiedEmail()
 	{
-		$subscriber = new App\Subscriber;
-		$subscriber->first_name = "abcd";
-		$subscriber->last_name = "abcd";
-		$subscriber->email = "abcd@gmail.com";
-		$subscriber->verified = False;
-		$subscriber->nonce = str_random(32);
-		$subscriber->save();
-
+		$subscriber = $this->createSubscriber();
 		$oldnonce = $subscriber->nonce;
 
 		// Should resend the email
@@ -126,5 +112,68 @@ class BasicTest extends TestCase {
 		$this->assertEquals($subscriber->verified, False);
 
 		$this->assertContains('sent an email ', $response->getContent());
+	}
+
+	public function testVerifyWithValidParams()
+	{
+		$subscriber = $this->createSubscriber();
+
+		// Make sure that subscriber is unverified before request
+		$this->AssertEquals(False, $subscriber->verified);
+
+		$data = [
+			"email" => $subscriber->email,
+			"nonce" => $subscriber->nonce
+		];
+
+		$response = $this->action('GET', 'SubscribersController@verify', $data);
+
+		// Test request succeeds
+		$this->assertEquals(200, $response->getStatusCode());
+
+		// Test that verified is set to True
+		$this->assertEquals(True, $subscriber->fresh()->verified);
+
+		$this->assertContains('verified', $response->getContent());
+	}
+
+	public function testVerifyWithWrongNonce()
+	{
+		$subscriber = $this->createSubscriber();
+
+		// Make sure that subscriber is unverified before request
+		$this->AssertEquals(False, $subscriber->verified);
+
+		$data = [
+			"email" => $subscriber->email,
+			"nonce" => "abcd"
+		];
+
+		$response = $this->action('GET', 'SubscribersController@verify', $data);
+
+		// Test request succeeds
+		$this->assertEquals(200, $response->getStatusCode());
+
+		// Test that verified is set to True
+		$this->assertEquals(False, $subscriber->fresh()->verified);
+
+		$this->assertContains('could not verify', $response->getContent());
+	}
+
+	public function testVerifyWithInvalidParams()
+	{
+		$subscriber = $this->createSubscriber();
+
+		// Make sure that subscriber is unverified before request
+		$this->AssertEquals(False, $subscriber->verified);
+
+		$data = [
+			"email" => $subscriber->email
+		];
+
+		$response = $this->action('GET', 'SubscribersController@verify', $data);
+
+		// Test request succeeds
+		$this->assertEquals(400, $response->getStatusCode());
 	}
 }

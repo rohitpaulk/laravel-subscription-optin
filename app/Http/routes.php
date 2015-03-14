@@ -13,3 +13,5 @@
 
 Route::get('/', 'SubscribersController@create');
 Route::post('/subscribers', 'SubscribersController@store');
+
+Route::get('/verify', 'SubscribersController@verify');

@@ -34,4 +34,17 @@ class TestCase extends Illuminate\Foundation\Testing\TestCase {
 		Mockery::Close();
 	}
 
+	public function createSubscriber($options=['verified' => False])
+	{
+		$subscriber = new App\Subscriber;
+		$subscriber->first_name = "First";
+		$subscriber->last_name = "Last";
+		$subscriber->email = "abcd@gmail.com";
+		$subscriber->verified = $options['verified'];
+		$subscriber->nonce = str_random(32);
+		$subscriber->save();
+
+		return $subscriber;
+	}
+
 }
