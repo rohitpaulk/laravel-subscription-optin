@@ -1,6 +1,7 @@
 <?php namespace App\Http\Controllers;
 
-use Request;
+use App\Subscriber;
+use App\Http\Requests\CreateSubscriberRequest;
 
 class SubscribersController extends Controller {
 
@@ -12,16 +13,6 @@ class SubscribersController extends Controller {
 	| This controller handles creating new subscibers.
 	|
 	*/
-
-	/**
-	 * Create a new controller instance.
-	 *
-	 * @return void
-	 */
-	public function __construct()
-	{
-
-	}
 
 	/**
 	 * Show the subscriber form to the user.
@@ -41,11 +32,18 @@ class SubscribersController extends Controller {
 	 *
 	 * @return Response
 	 */
-	public function store()
+	public function store(CreateSubscriberRequest $request)
 	{
-		$input = Request::all();
-		dd($input);
-		return view('subscribers/sent');
+		$input = $request->all();
+		$email = $input['email'];
+		$subscriber = new Subscriber;
+		$subscriber->first_name = $input['first_name'];
+		$subscriber->last_name = $input['last_name'];
+		$subscriber->email = $input['email'];
+		$subscriber->nonce = str_random(32);
+		$subscriber->verified = False;
+		$subscriber->save();
+		return view('subscribers/sent', compact(['email']));
 	}
 
 }

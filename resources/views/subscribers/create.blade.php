@@ -5,6 +5,15 @@
 	<body>
 		<h1>New Subscription</h1>
 
+		@if ($errors->any())
+			<ul>
+			@foreach ($errors->all() as $error)
+				<li>{{ $error }}</li>
+			@endforeach
+			</ul>
+		@endif
+
+
 		{!! Form::open(['url' => 'subscribers']) !!}
 
 			{!! Form::label('first_name', 'First Name:') !!}
@@ -20,6 +29,6 @@
 
 		{!! Form::close() !!}
 
-		Connected to {{ $database }}
+
 	</body>
 </html>
