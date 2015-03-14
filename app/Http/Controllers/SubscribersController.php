@@ -2,6 +2,7 @@
 
 use App\Subscriber;
 use App\Http\Requests\CreateSubscriberRequest;
+use Mail;
 
 class SubscribersController extends Controller {
 
@@ -43,6 +44,10 @@ class SubscribersController extends Controller {
 		$subscriber->nonce = str_random(32);
 		$subscriber->verified = False;
 		$subscriber->save();
+		Mail::send('emails.verification', ['email' => $email], function($message) use ($subscriber)
+		{
+		    $message->to($subscriber->email, $subscriber->first_name . " " . $subscriber->last_name)->subject('Verify your subscription');
+		});
 		return view('subscribers/sent', compact(['email']));
 	}
 
