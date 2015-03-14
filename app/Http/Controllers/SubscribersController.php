@@ -1,5 +1,7 @@
 <?php namespace App\Http\Controllers;
 
+use Request;
+
 class SubscribersController extends Controller {
 
 	/*
@@ -32,6 +34,18 @@ class SubscribersController extends Controller {
 		$database = \DB::connection()->getDatabaseName();
 
 		return view('subscribers/create', compact(['database']));
+	}
+
+	/**
+	 * Handle the POST response to the form
+	 *
+	 * @return Response
+	 */
+	public function store()
+	{
+		$input = Request::all();
+		dd($input);
+		return view('subscribers/sent');
 	}
 
 }

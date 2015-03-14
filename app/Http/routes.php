@@ -12,3 +12,4 @@
 */
 
 Route::get('/', 'SubscribersController@create');
+Route::post('/subscribers', 'SubscribersController@store');

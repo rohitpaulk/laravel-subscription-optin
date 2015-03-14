@@ -5,7 +5,7 @@
 	<body>
 		<h1>New Subscription</h1>
 
-		{!! Form::open() !!}
+		{!! Form::open(['url' => 'subscribers']) !!}
 
 			{!! Form::label('first_name', 'First Name:') !!}
 			{!! Form::text('first_name') !!}
