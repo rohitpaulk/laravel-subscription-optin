@@ -3,7 +3,7 @@ Hi {{ $full_name }},
 <br>
 <br>
 You're <b>already subscribed</b> to Awesome Newsletter!
-<div style="text-align: center; color: #999; padding: 0px; margin-top: 20px;">
+<div style="text-align: center; color: #999; padding: 20px 0px 0px 0px; ">
     <div style="font: normal 10px/21px Arial, sans-serif;">
         Sent by Awesome Newsletter, LLC
     </div>
