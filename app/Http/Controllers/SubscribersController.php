@@ -69,9 +69,15 @@ class SubscribersController extends Controller {
 	{
 		$input = Request::all();
 
+		// To be overridden if verification succeeds
+		$success_message ="We could not verify your email.";
+
+		// Don't proceed further if proper params aren't provided
 		if (!isset($input['email']) || !isset($input['nonce'])) {
-			abort(400);
+			return view('subscribers/verify', compact(['success_message']));
 		}
+
+		$input['email'] = strtolower($input['email']);
 
 		if (Subscriber::where('email', $input['email'])->count() > 0) {
 			$subscriber = Subscriber::where('email', $input['email'])->firstOrFail();
@@ -80,11 +86,7 @@ class SubscribersController extends Controller {
 				$subscriber->verified = true;
 				$subscriber->save();
 				$success_message ="Your email has been verified!";
-			} else {
-				$success_message ="We could not verify your email.";
 			}
-		} else {
-			abort(404);
 		}
 
 		return view('subscribers/verify', compact(['success_message']));

@@ -174,6 +174,7 @@ class BasicTest extends TestCase {
 		$response = $this->action('GET', 'SubscribersController@verify', $data);
 
 		// Test request succeeds
-		$this->assertEquals(400, $response->getStatusCode());
+		$this->assertEquals(200, $response->getStatusCode());
+		$this->assertContains('could not verify', $response->getContent());
 	}
 }
