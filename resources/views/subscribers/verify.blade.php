@@ -1,6 +1,9 @@
 @extends('layouts.base')
 
 @section('content')
-	<h1>Verify your email</h1>
-	<p>{{ $success_message }}</p>
+	<div class="row">
+		<div class="page-header text-center">
+			<p>{{ $success_message }}</p>
+		</div>
+	</div>
 @stop

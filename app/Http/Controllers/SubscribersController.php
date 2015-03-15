@@ -22,10 +22,7 @@ class SubscribersController extends Controller {
 	 */
 	public function create()
 	{
-		// Test DB connection
-		$database = \DB::connection()->getDatabaseName();
-
-		return view('subscribers/create', compact(['database']));
+		return view('subscribers/create');
 	}
 
 	/**
@@ -36,22 +33,23 @@ class SubscribersController extends Controller {
 	public function store(CreateSubscriberRequest $request)
 	{
 		$input = $request->all();
-		$email = $input['email'];
+		$input['email'] = strtolower($input['email']);
 
 		// Check whether subscriber exists
 		if (Subscriber::where('email', $input['email'])->count() > 0) {
 			// Fetch the subscriber from the database
 			$subscriber = Subscriber::where('email', $input['email'])->firstOrFail();
 
-			// If the subscriber isn't verified, resend verification email
+			// If the subscriber isn't verified, resend verification email with new nonce
 			if (!$subscriber->verified)  {
 				$subscriber->nonce = str_random(32);
 				$subscriber->save();
 
-				$success_message = $this->sendVerificationEmail($subscriber);
+				$this->sendVerificationEmail($subscriber);
 			}
 			else {
-				$success_message = "This email is already verified!";
+				// If they are already subscribe, send an 'already-verified' email
+				$this->sendAlreadyVerifiedEmail($subscriber);
 			}
 		} else {
 			// Create a Subscriber
@@ -60,10 +58,11 @@ class SubscribersController extends Controller {
 			$subscriber->verified = False;
 			$subscriber->save();
 
-			$success_message = $this->sendVerificationEmail($subscriber);
+			// Send a verification email
+			$this->sendVerificationEmail($subscriber);
 		}
 
-		return view('subscribers/sent', compact(['success_message']));
+		return view('subscribers/sent');
 	}
 
 	public function verify()
@@ -95,7 +94,7 @@ class SubscribersController extends Controller {
 	 * Send a verification email
 	 *
 	 * @param Subscriber
-	 * @return String
+	 * @return void
 	 */
 	protected function sendVerificationEmail($subscriber)
 	{
@@ -105,10 +104,25 @@ class SubscribersController extends Controller {
 		];
 		Mail::queue('emails.verification', $data, function($message) use ($subscriber)
 		{
-			$message->to($subscriber->email, $subscriber->full_name())->subject('Verify your subscription');
+			$message->to($subscriber->email, $subscriber->full_name())->subject('Verify your subscription to Awesome Newsletter');
 		});
+	}
 
-		return "We've sent an email to " . $subscriber->email;
+	/**
+	 * Send an email saying that a user is already verified.
+	 *
+	 * @param Subscriber
+	 * @return void
+	 */
+	protected function sendAlreadyVerifiedEmail($subscriber)
+	{
+		$data = [
+			'full_name' => $subscriber->full_name(),
+		];
+		Mail::queue('emails.already_verified', $data, function($message) use ($subscriber)
+		{
+			$message->to($subscriber->email, $subscriber->full_name())->subject('You are already subscribed to Awesome Newsletter');
+		});
 	}
 
 }

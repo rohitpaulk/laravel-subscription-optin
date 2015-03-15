@@ -59,8 +59,8 @@ class BasicTest extends TestCase {
 	public function testSubscribersStoreWithAlreadyVerifiedEmail()
 	{
 		$subscriber = $this->createSubscriber(['verified' => True]);
-		// Should not send an email
-		Mail::shouldReceive('queue')->never();
+		// Should receive an email
+		Mail::shouldReceive('queue')->once();
 
 		$data = [
 			'first_name' => "Abcd",
@@ -79,7 +79,7 @@ class BasicTest extends TestCase {
 		$subscriber = App\Subscriber::first();
 		$this->assertEquals($subscriber->verified, True);
 
-		$this->assertContains('is already verified', $response->getContent());
+		$this->assertContains('Check your email', $response->getContent());
 	}
 
 	public function testSubscribersStoreWithExistingButUnverifiedEmail()
@@ -111,7 +111,7 @@ class BasicTest extends TestCase {
 		$subscriber = App\Subscriber::first();
 		$this->assertEquals($subscriber->verified, False);
 
-		$this->assertContains('sent an email ', $response->getContent());
+		$this->assertContains('Check your email', $response->getContent());
 	}
 
 	public function testVerifyWithValidParams()
